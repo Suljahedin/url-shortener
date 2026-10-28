@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from app import models
 from app.database import Base, engine
-from app.routers import health, urls
+from app.routers import health, redirects, urls
 
 
 @asynccontextmanager
@@ -20,3 +20,4 @@ app = FastAPI(
 
 app.include_router(health.router)
 app.include_router(urls.router)
+app.include_router(redirects.router)
