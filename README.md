@@ -10,13 +10,13 @@ The backend is being built first. The frontend will be added after the API is im
 
 ## Planned Features
 
-- [ ] Create short URLs from long URLs
-- [ ] Redirect users to original URLs
-- [ ] Store URLs in a SQLite database
-- [ ] Track click counts
-- [ ] View URL statistics
-- [ ] Delete shortened URLs
-- [ ] Automated API tests
+- [x] Create short URLs from long URLs
+- [x] Redirect users to original URLs
+- [x] Store URLs in a SQLite database
+- [x] Track click counts
+- [x] View URL statistics
+- [x] Delete shortened URLs
+- [x] Automated API tests
 - [ ] Build a Next.js frontend
 
 ## Tech Stack
