@@ -110,3 +110,41 @@ def test_redirect_missing_code(client):
     )
 
     assert response.status_code == 404
+
+
+def test_list_urls_pagination(client):
+    for domain in ("python.org", "fastapi.tiangolo.com", "github.com"):
+        response = client.post(
+            "/urls",
+            json={"original_url": f"https://{domain}/"},
+        )
+        assert response.status_code == 201
+
+    response = client.get("/urls?skip=0&limit=2")
+
+    assert response.status_code == 200
+    assert len(response.json()) == 2
+
+
+def test_search_urls(client):
+    client.post(
+        "/urls",
+        json={"original_url": "https://www.python.org/"},
+    )
+    client.post(
+        "/urls",
+        json={"original_url": "https://www.github.com/"},
+    )
+
+    response = client.get("/urls?search=python")
+
+    assert response.status_code == 200
+    results = response.json()
+    assert len(results) == 1
+    assert "python.org" in results[0]["original_url"]
+
+
+def test_list_urls_rejects_invalid_pagination(client):
+    assert client.get("/urls?skip=-1").status_code == 422
+    assert client.get("/urls?limit=0").status_code == 422
+    assert client.get("/urls?limit=101").status_code == 422

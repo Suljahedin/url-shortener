@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -19,8 +19,18 @@ def create_url(data: URLCreate, db: Session = Depends(get_db)):
 
 
 @router.get("", response_model=list[URLResponse])
-def get_urls(db: Session = Depends(get_db)):
-    return db.query(URL).order_by(URL.id.desc()).all()
+def get_urls(
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=10, ge=1, le=100),
+    search: str | None = Query(default=None, max_length=2048),
+    db: Session = Depends(get_db),
+):
+    query = db.query(URL)
+
+    if search and search.strip():
+        query = query.filter(URL.original_url.contains(search.strip()))
+
+    return query.order_by(URL.id.desc()).offset(skip).limit(limit).all()
 
 
 @router.get("/{url_id}", response_model=URLResponse)
